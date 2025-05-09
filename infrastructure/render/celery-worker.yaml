@@ -1,0 +1,14 @@
+- type: worker
+  name: predictstats-celery
+  runtime: docker
+  dockerfilePath: backend/Dockerfile
+  env: docker
+  command: celery -A config worker -l INFO
+  envVars:
+    - key: DJANGO_SETTINGS_MODULE
+      value: config.settings.production
+    - key: DATABASE_URL
+      syncValue: ${DATABASE_URL}
+    - key: REDIS_URL
+      syncValue: ${REDIS_URL}
+  plan: standard-1x
