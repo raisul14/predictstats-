@@ -1,0 +1,34 @@
+# Django API Service
+- type: web
+  name: predictstats-backend
+  runtime: docker
+  dockerfilePath: backend/Dockerfile
+  env: docker
+  region: frankfurt  # Choose closest region
+  envVars:
+    - key: DJANGO_SETTINGS_MODULE
+      value: config.settings.production
+    - key: DATABASE_URL
+      fromDatabase:
+        name: predictstats-pg
+        property: connectionString
+    - key: REDIS_URL
+      fromService:
+        type: redis
+        name: predictstats-redis
+        property: connectionString
+    - key: DJANGO_SECRET_KEY
+      generateValue: true
+    - key: CELERY_BROKER_URL
+      syncValue: ${REDIS_URL}/1
+  healthCheckPath: /health/
+  plan: standard-1x
+  numInstances: 2
+  autoDeploy: true
+
+# PostgreSQL Database (separate creation)
+- type: postgres
+  name: predictstats-pg
+  plan: standard-0
+  databaseName: predictstats
+  user: predictstats_admin
