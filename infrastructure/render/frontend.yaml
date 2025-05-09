@@ -1,0 +1,14 @@
+- type: web
+  name: predictstats-frontend
+  runtime: docker
+  dockerfilePath: frontend/Dockerfile
+  env: docker
+  envVars:
+    - key: NEXT_PUBLIC_API_URL
+      syncValue: https://predictstats-backend.onrender.com
+    - key: NEXT_PUBLIC_ADS_ENABLED
+      value: "true"
+  healthCheckPath: /api/health
+  buildCommand: npm run build
+  staticPath: frontend/.next
+  plan: standard-1x
